@@ -48,6 +48,36 @@ class ModelDetails
   final String parameter_size;
   final String quantization_level;
 }
+// COMPLETION API DATA MODEL===
+@JsonSerializable()
+class ModelCompletionQuery {
+  ModelCompletionQuery(this.model, this.prompt, this.stream);
+  factory ModelCompletionQuery.fromJson(Map<String, dynamic> json) => _$ModelCompletionQueryFromJson(json);
+  Map<String, dynamic> toJson() => _$ModelCompletionQueryToJson(this);
+
+  final String model;
+  final String prompt;
+  final bool stream;
+}
+
+@JsonSerializable()
+class ModelCompletionResponse {
+  ModelCompletionResponse(this.model, this.created_at, this.response, this.done, this.context, this.total_duration, this.load_duration, this.prompt_eval_count, this.prompt_eval_duration, this.eval_count, this.eval_duration);
+  factory ModelCompletionResponse.fromJson(Map<String, dynamic> json) => _$ModelCompletionResponseFromJson(json);
+  Map<String, dynamic> toJson() => _$ModelCompletionResponseToJson(this);
+
+  final String model;
+  final String created_at;
+  final String response;
+  final bool done;
+  final List<int> context;
+  final num total_duration;
+  final num load_duration;
+  final num prompt_eval_count;
+  final num prompt_eval_duration;
+  final num eval_count;
+  final num eval_duration;
+}
 
 // CHAT API DATA MODEL===
 @JsonSerializable(explicitToJson: true)

@@ -79,18 +79,26 @@ class EnyoState extends ChangeNotifier
     final streamed_response = await ollama_client.query_model(query);
     msgs.add(Message("", "")); //  need to do this to keep indexing right for listview.builder
     nowStreaming = true;
+    int chunkLen = 0;
+
     streamed_response.stream.toStringStream().listen((chunk) {
       var model_response_chunk = ModelResponseChunk.fromJson(jsonDecode(chunk));
       if (last_model_used.isEmpty || last_model_used != model_response_chunk.model)
       {
         last_model_used = model_response_chunk.model;
       }
+
+      if (chunkLen < 4 && lastMsg.startsWith("echo")) {
+        // TODO: make rpc call
+      }
+
       
       lastMsg += model_response_chunk.message.content;
       notifyListeners();
     },
         onDone: ()
         {
+          // swap the empty message with a message containing lastMsg
           msgs.removeLast();
           msgs.add(Message("assistant", lastMsg));
           lastMsg = "";

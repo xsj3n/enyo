@@ -58,6 +58,56 @@ Map<String, dynamic> _$ModelDetailsToJson(ModelDetails instance) =>
       'quantization_level': instance.quantization_level,
     };
 
+ModelCompletionQuery _$ModelCompletionQueryFromJson(
+        Map<String, dynamic> json) =>
+    ModelCompletionQuery(
+      json['model'] as String,
+      json['prompt'] as String,
+      json['stream'] as bool,
+    );
+
+Map<String, dynamic> _$ModelCompletionQueryToJson(
+        ModelCompletionQuery instance) =>
+    <String, dynamic>{
+      'model': instance.model,
+      'prompt': instance.prompt,
+      'stream': instance.stream,
+    };
+
+ModelCompletionResponse _$ModelCompletionResponseFromJson(
+        Map<String, dynamic> json) =>
+    ModelCompletionResponse(
+      json['model'] as String,
+      json['created_at'] as String,
+      json['response'] as String,
+      json['done'] as bool,
+      (json['context'] as List<dynamic>)
+          .map((e) => (e as num).toInt())
+          .toList(),
+      json['total_duration'] as num,
+      json['load_duration'] as num,
+      json['prompt_eval_count'] as num,
+      json['prompt_eval_duration'] as num,
+      json['eval_count'] as num,
+      json['eval_duration'] as num,
+    );
+
+Map<String, dynamic> _$ModelCompletionResponseToJson(
+        ModelCompletionResponse instance) =>
+    <String, dynamic>{
+      'model': instance.model,
+      'created_at': instance.created_at,
+      'response': instance.response,
+      'done': instance.done,
+      'context': instance.context,
+      'total_duration': instance.total_duration,
+      'load_duration': instance.load_duration,
+      'prompt_eval_count': instance.prompt_eval_count,
+      'prompt_eval_duration': instance.prompt_eval_duration,
+      'eval_count': instance.eval_count,
+      'eval_duration': instance.eval_duration,
+    };
+
 ModelQuery _$ModelQueryFromJson(Map<String, dynamic> json) => ModelQuery(
       json['model'] as String,
       (json['messages'] as List<dynamic>)
@@ -156,8 +206,8 @@ Map<String, dynamic> _$AvailModelToJson(AvailModel instance) =>
 
 PythonResults _$PythonResultsFromJson(Map<String, dynamic> json) =>
     PythonResults(
-      pyOutput: json['pyOutput'] as String,
-      exitCode: (json['exitCode'] as num).toInt(),
+      json['pyOutput'] as String,
+      (json['exitCode'] as num).toInt(),
     );
 
 Map<String, dynamic> _$PythonResultsToJson(PythonResults instance) =>
@@ -167,15 +217,17 @@ Map<String, dynamic> _$PythonResultsToJson(PythonResults instance) =>
     };
 
 PythonCall _$PythonCallFromJson(Map<String, dynamic> json) => PythonCall(
-      p0: json['p0'] as String,
-      p1: json['p1'] as String,
-      p2: json['p2'] as String,
-      p3: json['p3'] as String,
-      p4: json['p4'] as String,
+      json['modName'] as String,
+      json['p0'] as String,
+      json['p1'] as String,
+      json['p2'] as String,
+      json['p3'] as String,
+      json['p4'] as String,
     );
 
 Map<String, dynamic> _$PythonCallToJson(PythonCall instance) =>
     <String, dynamic>{
+      'modName': instance.modName,
       'p0': instance.p0,
       'p1': instance.p1,
       'p2': instance.p2,
