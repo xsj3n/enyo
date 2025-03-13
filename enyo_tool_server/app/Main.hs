@@ -10,7 +10,8 @@ import qualified  Data.Text as Txt
 import System.Exit
 import Control.Monad.IO.Class (liftIO)
 import Control.Exception
-import Control.Monad (void)
+import Control.Concurrent
+import Control.Monad
 import GHC.IO.Handle
 import GHC.Generics
 import Network.Socket
@@ -29,16 +30,11 @@ main = do
   bind sock $ SockAddrInet 8181 0
   listen sock 2
   putStrLn "[*] Tool server started on port 8181"
-  mainLoop sock
+  forever $ do
+    (connSock, addr) <- accept sock
+    putStrLn $ "[*] Started session with RPC client: " ++ show addr 
+    forkIO $ commLoop connSock `catch` \e -> putStrLn $ "[*] Session closed due to error: " ++ show (e :: IOError) 
   
-
-mainLoop :: Socket -> IO ()
-mainLoop sock = do
-  (connSock, _) <- accept sock
-  putStrLn "[*] Started session with RPC client"
-  commLoop connSock
-  mainLoop sock
-
 
 commLoop :: Socket -> IO ()
 commLoop sock = do
@@ -119,7 +115,7 @@ strIsNotEmpty str
   | not (null str) = True
   | otherwise = False 
          
-data PythonResults = PythonResults { pyOutput :: String, exitcode :: Int } deriving (Generic, Show)
+data PythonResults = PythonResults { pyOutput :: String, exitCode :: Int } deriving (Generic, Show)
 data PythonCall = PythonCall { modName :: String, p0 :: String, p1 :: String, p2 :: String, p3 :: String, p4 :: String } deriving (Generic, Show)
 data PythonMod = PythonMod { name :: String, description :: String } deriving (Generic, Show)
 newtype ModList = ModList { modules :: [PythonMod] } deriving (Generic, Show)

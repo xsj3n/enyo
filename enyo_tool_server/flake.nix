@@ -28,7 +28,8 @@
       nspr
       xorg.libxcb
     ];
-    
+
+    nativeBuildInputs = haskell_tools ++ python_tools;    
     shellHook = ''
       if [ -d "venv/" ]; then
         source venv/bin/activate
@@ -37,7 +38,6 @@
       fi
       export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${pkgs.lib.makeLibraryPath nativeBuildInputs }
     '';
-    nativeBuildInputs = haskell_tools ++ python_tools;
     nonFhsSHell = pkgs.mkShell
     {
       inherit  name nativeBuildInputs shellHook;
@@ -52,7 +52,7 @@
     };
   in
   {
-    devShells."${system}".default = fhsShell.env;
+     devShells."${system}".default = fhsShell.env;
      packages."${system}".default = hpkgs.callCabal2nix "${name}" src { };
   };
 }
