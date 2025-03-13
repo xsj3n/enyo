@@ -18,15 +18,16 @@ class EnyoState extends ChangeNotifier
 
   final ollama_client = OllamaClient();
   final bottom_text_field_ctrl = TextEditingController();
-  late final List<Message> msgs;
-
-  String latest_msg_content = "";
   String last_model_used = "";
+  String lastMsg = "";
+  bool nowStreaming = false;
+  late List<Message> msgs;
 
-
-  EnyoState() {
+  EnyoState () {
     msgs = ollama_client.model_ctx;
   }
+
+
 
   void record() {
     if (!_recording_state.isRecording) {
@@ -66,12 +67,18 @@ class EnyoState extends ChangeNotifier
     }
   }
 
+  // TODO: make a button for this
+  void clearMsgs() {
+    msgs.clear();
+    notifyListeners();
+  }
 
   void chat(String query) async
   {
-    latest_msg_content = "";
-
+    
     final streamed_response = await ollama_client.query_model(query);
+    msgs.add(Message("", "")); //  need to do this to keep indexing right for listview.builder
+    nowStreaming = true;
     streamed_response.stream.toStringStream().listen((chunk) {
       var model_response_chunk = ModelResponseChunk.fromJson(jsonDecode(chunk));
       if (last_model_used.isEmpty || last_model_used != model_response_chunk.model)
@@ -79,15 +86,18 @@ class EnyoState extends ChangeNotifier
         last_model_used = model_response_chunk.model;
       }
       
-      latest_msg_content += model_response_chunk.message.content;
+      lastMsg += model_response_chunk.message.content;
       notifyListeners();
     },
         onDone: ()
         {
-          ollama_client.model_ctx.add(Message("assistant", latest_msg_content));
+          msgs.removeLast();
+          msgs.add(Message("assistant", lastMsg));
+          lastMsg = "";
+          nowStreaming = false;
           notifyListeners();
         },
-        onError: (e) => ()
+        onError: (e) => () // TODO: handle this error
     );
   }
 

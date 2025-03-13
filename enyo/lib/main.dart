@@ -92,8 +92,37 @@ class ScaffoldBody extends StatelessWidget {
     return Consumer<EnyoState>(
       builder: (context, enyo_state, child) {
         return Container(
-          padding: EdgeInsets.all(120),
-          child: Center(child: Text(enyo_state.latest_msg_content, style: TextStyle(fontFamily: "SFMono", fontWeight: FontWeight.normal), )),
+          padding: EdgeInsets.all(50),
+          child: Center(child: ListView.builder(
+              itemCount: enyo_state.msgs.length,
+              itemBuilder: (context, index) {
+                final msgLen = enyo_state.msgs.length - 1;
+                if (enyo_state.msgs[index].role == "user") {
+                  return Column(children: [
+                    BlackText(txt: enyo_state.msgs[index].content, size: 16),
+                    Padding(padding: EdgeInsets.only(bottom: 2)),
+                    Divider(height: 1, thickness: 1, color: Colors.grey,)
+
+                  ]);
+                }
+
+                if (index == msgLen && enyo_state.nowStreaming) {
+                  return Column(children: [
+                      Padding(padding: EdgeInsets.only(top: 10)),
+                      BlackText(txt: enyo_state.lastMsg)
+                  ]);
+                }
+                if (index == msgLen && !enyo_state.nowStreaming) {
+                  return Column(children: [
+                    Padding(padding: EdgeInsets.only(top: 10)),
+                    BlackText(txt: enyo_state.msgs[msgLen].content)
+                  ]);
+                }
+                return Column(children: [
+                  BlackText(txt: enyo_state.msgs[index].content),
+                  Padding(padding: EdgeInsets.only(top: 10, bottom: 40)),
+                ]);
+          })),
         );
       },
     );
@@ -154,7 +183,19 @@ class BlackTextField extends StatelessWidget {
           );
         });
   }
+}
 
+class BlackText extends StatelessWidget {
+  const BlackText({super.key, required this.txt, this.size = 14});
+  final String txt;
+  final double size;
 
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+        txt,
+        style: TextStyle(fontFamily: "SFMono", fontWeight: FontWeight.normal, fontSize: size)
+    );
+  }
 }
 

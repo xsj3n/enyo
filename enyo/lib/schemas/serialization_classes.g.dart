@@ -153,3 +153,32 @@ Map<String, dynamic> _$AvailModelToJson(AvailModel instance) =>
       'digest': instance.digest,
       'details': instance.details,
     };
+
+PythonResults _$PythonResultsFromJson(Map<String, dynamic> json) =>
+    PythonResults(
+      pyOutput: json['pyOutput'] as String,
+      exitCode: (json['exitCode'] as num).toInt(),
+    );
+
+Map<String, dynamic> _$PythonResultsToJson(PythonResults instance) =>
+    <String, dynamic>{
+      'pyOutput': instance.pyOutput,
+      'exitCode': instance.exitCode,
+    };
+
+PythonCall _$PythonCallFromJson(Map<String, dynamic> json) => PythonCall(
+      p0: json['p0'] as String,
+      p1: json['p1'] as String,
+      p2: json['p2'] as String,
+      p3: json['p3'] as String,
+      p4: json['p4'] as String,
+    );
+
+Map<String, dynamic> _$PythonCallToJson(PythonCall instance) =>
+    <String, dynamic>{
+      'p0': instance.p0,
+      'p1': instance.p1,
+      'p2': instance.p2,
+      'p3': instance.p3,
+      'p4': instance.p4,
+    };

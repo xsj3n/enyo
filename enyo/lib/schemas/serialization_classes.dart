@@ -2,6 +2,10 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'serialization_classes.g.dart';
 
+// Commands to gen bindings===
+// dart run build_runner build --delete-conflicting-outputs
+// dart run build_runner watch --delete-conflicting-outputs
+
 // LIST RUNNING MODELS API DATA MODEL===
 @JsonSerializable()
 class RunningModels
@@ -47,8 +51,7 @@ class ModelDetails
 
 // CHAT API DATA MODEL===
 @JsonSerializable(explicitToJson: true)
-class ModelQuery
-{
+class ModelQuery {
   ModelQuery(this.model, this.messages);
   factory ModelQuery.fromJson(Map<String, dynamic> json) => _$ModelQueryFromJson(json);
   Map<String, dynamic> toJson() => _$ModelQueryToJson(this);
@@ -58,8 +61,7 @@ class ModelQuery
 }
 
 @JsonSerializable(explicitToJson: true)
-class ModelResponseChunk
-{
+class ModelResponseChunk {
   ModelResponseChunk(this.model, this.created_at, this.message, this.done);
   factory ModelResponseChunk.fromJson(Map<String, dynamic> json) => _$ModelResponseChunkFromJson(json);
   Map<String, dynamic> toJson() => _$ModelResponseChunkToJson(this);
@@ -72,8 +74,7 @@ class ModelResponseChunk
 }
 
 @JsonSerializable()
-class ModelResponseEndChunk
-{
+class ModelResponseEndChunk {
   ModelResponseEndChunk(this.model, this.created_at, this.done, this.total_duration, this.load_duration, this.prompt_eval_count, this.prompt_eval_duration, this.eval_count, this.eval_duration);
   factory ModelResponseEndChunk.fromJson(Map<String, dynamic> json) => _$ModelResponseEndChunkFromJson(json);
   Map<String, dynamic> toJson() => _$ModelResponseEndChunkToJson(this);
@@ -91,8 +92,7 @@ class ModelResponseEndChunk
 }
 
 @JsonSerializable()
-class Message
-{
+class Message {
   Message(this.role, this.content);
   factory Message.fromJson(Map<String, dynamic> json) => _$MessageFromJson(json);
   Map<String, dynamic> toJson() => _$MessageToJson(this);
@@ -105,20 +105,16 @@ class Message
 // LIST MODEL LIBRARY API DATA MODEL
 
 @JsonSerializable()
-class AvailableModels
-{
+class AvailableModels {
   AvailableModels(this.models);
   factory AvailableModels.fromJson(Map<String, dynamic> json) => _$AvailableModelsFromJson(json);
   Map<String, dynamic> toJson() => _$AvailableModelsToJson(this);
 
   final List<AvailModel> models;
-
-
 }
 
 @JsonSerializable()
 class AvailModel {
-
   AvailModel({
     required this.name,
     required this.modified_at,
@@ -137,5 +133,38 @@ class AvailModel {
   final ModelDetails details;
 
 
+
+}
+
+@JsonSerializable()
+class PythonResults {
+  PythonResults(this.pyOutput, this.exitCode);
+  factory PythonResults.fromJson(Map<String, dynamic> json) => _$PythonResultsFromJson(json);
+  Map<String, dynamic> toJson() => _$PythonResultsToJson(this);
+
+  final String pyOutput;
+  final int exitCode;
+}
+
+@JsonSerializable()
+class PythonCall {
+  PythonCall(
+      this.modName,
+      this.p0,
+      this.p1,
+      this.p2,
+      this.p3,
+      this.p4
+      );
+
+  factory PythonCall.fromJson(Map<String, dynamic> json) => _$PythonCallFromJson(json);
+  Map<String, dynamic> toJson() => _$PythonCallToJson(this);
+
+  final String modName;
+  final String p0;
+  final String p1;
+  final String p2;
+  final String p3;
+  final String p4;
 
 }
