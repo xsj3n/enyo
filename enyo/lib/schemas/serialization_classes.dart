@@ -1,0 +1,141 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'serialization_classes.g.dart';
+
+// LIST RUNNING MODELS API DATA MODEL===
+@JsonSerializable()
+class RunningModels
+{
+  RunningModels(this.models);
+  factory RunningModels.fromJson(Map<String, dynamic> json) => _$RunningModelsFromJson(json);
+  Map<String, dynamic> toJson() => _$RunningModelsToJson(this);
+
+  final List<ModelRunning> models;
+}
+
+@JsonSerializable()
+class ModelRunning
+{
+  ModelRunning(this.name, this.model, this.size, this.digest, this.details, this.expires_at, this.size_vram);
+  factory ModelRunning.fromJson(Map<String, dynamic> json) => _$ModelRunningFromJson(json);
+  Map<String, dynamic> toJson() => _$ModelRunningToJson(this);
+
+  final String name;
+  final String model;
+  final num size;
+  final String digest;
+  final ModelDetails details;
+  final String expires_at;
+  final num size_vram;
+
+}
+
+@JsonSerializable()
+class ModelDetails
+{
+  ModelDetails(this.parent_model, this.format, this.family, this.families, this.parameter_size, this.quantization_level);
+  factory ModelDetails.fromJson(Map<String, dynamic> json) => _$ModelDetailsFromJson(json);
+  Map<String, dynamic> toJson() => _$ModelDetailsToJson(this);
+
+  final String parent_model;
+  final String format;
+  final String family;
+  final List<String> families;
+  final String parameter_size;
+  final String quantization_level;
+}
+
+// CHAT API DATA MODEL===
+@JsonSerializable(explicitToJson: true)
+class ModelQuery
+{
+  ModelQuery(this.model, this.messages);
+  factory ModelQuery.fromJson(Map<String, dynamic> json) => _$ModelQueryFromJson(json);
+  Map<String, dynamic> toJson() => _$ModelQueryToJson(this);
+
+  final String model;
+  final List<Message> messages;
+}
+
+@JsonSerializable(explicitToJson: true)
+class ModelResponseChunk
+{
+  ModelResponseChunk(this.model, this.created_at, this.message, this.done);
+  factory ModelResponseChunk.fromJson(Map<String, dynamic> json) => _$ModelResponseChunkFromJson(json);
+  Map<String, dynamic> toJson() => _$ModelResponseChunkToJson(this);
+
+  final String model;
+  final String created_at;
+  final Message message;
+  final bool done;
+
+}
+
+@JsonSerializable()
+class ModelResponseEndChunk
+{
+  ModelResponseEndChunk(this.model, this.created_at, this.done, this.total_duration, this.load_duration, this.prompt_eval_count, this.prompt_eval_duration, this.eval_count, this.eval_duration);
+  factory ModelResponseEndChunk.fromJson(Map<String, dynamic> json) => _$ModelResponseEndChunkFromJson(json);
+  Map<String, dynamic> toJson() => _$ModelResponseEndChunkToJson(this);
+
+  final String model;
+  final String created_at;
+  final bool done;
+  final num total_duration;
+  final num load_duration;
+  final num prompt_eval_count;
+  final num prompt_eval_duration;
+  final num eval_count;
+  final num eval_duration;
+
+}
+
+@JsonSerializable()
+class Message
+{
+  Message(this.role, this.content);
+  factory Message.fromJson(Map<String, dynamic> json) => _$MessageFromJson(json);
+  Map<String, dynamic> toJson() => _$MessageToJson(this);
+
+  final String role;
+  final String content;
+  final String? images = null;
+}
+
+// LIST MODEL LIBRARY API DATA MODEL
+
+@JsonSerializable()
+class AvailableModels
+{
+  AvailableModels(this.models);
+  factory AvailableModels.fromJson(Map<String, dynamic> json) => _$AvailableModelsFromJson(json);
+  Map<String, dynamic> toJson() => _$AvailableModelsToJson(this);
+
+  final List<AvailModel> models;
+
+
+}
+
+@JsonSerializable()
+class AvailModel {
+
+  AvailModel({
+    required this.name,
+    required this.modified_at,
+    required this.size,
+    required this.digest,
+    required this.details,
+  });
+
+  factory AvailModel.fromJson(Map<String, dynamic> json) => _$AvailModelFromJson(json);
+  Map<String, dynamic> toJson() => _$AvailModelToJson(this);
+
+  final String name;
+  final String modified_at;
+  final int size;
+  final String digest;
+  final ModelDetails details;
+
+
+
+}
