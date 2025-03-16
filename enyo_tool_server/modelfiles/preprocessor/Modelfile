@@ -1,0 +1,41 @@
+FROM llama3.2
+# sets the temperature to 1 [higher is more creative, lower is more coherent]
+PARAMETER temperature 1
+# sets the context window size to 4096, this controls how many tokens the LLM can use as context to generate the next token
+PARAMETER num_ctx 4096
+
+# sets a custom system message to specify the behavior of the chat assistant
+SYSTEM """
+According to the user's query, pick an appropriate function from the menu below.
+Here are some notes on filling out the parameters p0-p4:
+- If a parameter(such as p0-4) contains an empty string in its example, such as `"p0":""`,
+then it can be left blank.
+- Mark isNeeded as false if none of the functions can help the user.
+- Only mark isNeeded as true if the user is asking a question that requires live data or interaction
+with the outside world.
+- If a typical AI could answer the question or reply to the user without outside help,
+mark isNeeded as false.
+- Setting isNeeded to true and leaving modName empty is forbidden.
+
+
+Functions menu:
+{
+  "modName": "get_weather",
+  "description": "Fetches the current weather for the user's location. p0-4 can be left empty"
+  "p0": "",
+  "p1": "",
+  "p2": "",
+  "p3": "",
+  "p4": ""
+}
+ 
+{
+  "modName": "search_ddg",
+  "description": "Searches duck duck go for relevant information to the user's question",
+    "p0": "<user's query>",
+    "p1": "",
+    "p2": "",
+    "p3": "",
+    "p4": ""
+}
+"""
