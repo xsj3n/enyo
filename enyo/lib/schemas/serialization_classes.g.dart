@@ -217,20 +217,72 @@ Map<String, dynamic> _$PythonResultsToJson(PythonResults instance) =>
     };
 
 PythonCall _$PythonCallFromJson(Map<String, dynamic> json) => PythonCall(
-      json['modName'] as String,
-      json['p0'] as String,
-      json['p1'] as String,
-      json['p2'] as String,
-      json['p3'] as String,
-      json['p4'] as String,
+      isNeeded: json['isNeeded'] as bool?,
+      modName: json['modName'] as String,
+      p0: json['p0'] as String,
+      p1: json['p1'] as String,
+      p2: json['p2'] as String,
+      p3: json['p3'] as String,
+      p4: json['p4'] as String,
     );
 
-Map<String, dynamic> _$PythonCallToJson(PythonCall instance) =>
+Map<String, dynamic> _$PythonCallToJson(PythonCall instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('isNeeded', instance.isNeeded);
+  val['modName'] = instance.modName;
+  val['p0'] = instance.p0;
+  val['p1'] = instance.p1;
+  val['p2'] = instance.p2;
+  val['p3'] = instance.p3;
+  val['p4'] = instance.p4;
+  return val;
+}
+
+ToolFormat _$ToolFormatFromJson(Map<String, dynamic> json) => ToolFormat(
+      json['type'] as String,
+      Properties.fromJson(json['properties'] as Map<String, dynamic>),
+      (json['required'] as List<dynamic>).map((e) => e as String).toList(),
+    );
+
+Map<String, dynamic> _$ToolFormatToJson(ToolFormat instance) =>
     <String, dynamic>{
+      'type': instance.type,
+      'properties': instance.properties,
+      'required': instance.required,
+    };
+
+Properties _$PropertiesFromJson(Map<String, dynamic> json) => Properties(
+      Property.fromJson(json['isNeeded'] as Map<String, dynamic>),
+      Property.fromJson(json['modName'] as Map<String, dynamic>),
+      Property.fromJson(json['p0'] as Map<String, dynamic>),
+      Property.fromJson(json['p1'] as Map<String, dynamic>),
+      Property.fromJson(json['p2'] as Map<String, dynamic>),
+      Property.fromJson(json['p3'] as Map<String, dynamic>),
+      Property.fromJson(json['p4'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$PropertiesToJson(Properties instance) =>
+    <String, dynamic>{
+      'isNeeded': instance.isNeeded,
       'modName': instance.modName,
       'p0': instance.p0,
       'p1': instance.p1,
       'p2': instance.p2,
       'p3': instance.p3,
       'p4': instance.p4,
+    };
+
+Property _$PropertyFromJson(Map<String, dynamic> json) => Property(
+      json['type'] as String,
+    );
+
+Map<String, dynamic> _$PropertyToJson(Property instance) => <String, dynamic>{
+      'type': instance.type,
     };
