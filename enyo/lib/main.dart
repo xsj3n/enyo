@@ -87,7 +87,7 @@ class ScaffoldBody extends StatelessWidget {
           padding: EdgeInsets.all(50),
           child: Center(
               child: enyo_state.isLoading
-                  ? BlackText(txt: "<insrt loading animation")
+                  ? BlackText(txt: "<insert loading animation>")
                   : ListView.builder(
                       itemCount: enyo_state.msgs.length,
                       itemBuilder: (context, index) {

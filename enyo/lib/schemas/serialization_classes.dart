@@ -53,7 +53,11 @@ class ModelDetails {
 // COMPLETION API DATA MODEL===
 @JsonSerializable()
 class ModelCompletionQuery {
-  ModelCompletionQuery(this.model, this.prompt, this.stream);
+  ModelCompletionQuery(
+      {required this.model,
+      required this.prompt,
+      required this.stream,
+      this.format});
   factory ModelCompletionQuery.fromJson(Map<String, dynamic> json) =>
       _$ModelCompletionQueryFromJson(json);
   Map<String, dynamic> toJson() => _$ModelCompletionQueryToJson(this);
@@ -61,6 +65,7 @@ class ModelCompletionQuery {
   final String model;
   final String prompt;
   final bool stream;
+  ToolFormat? format;
 }
 
 @JsonSerializable()
@@ -146,7 +151,7 @@ class ModelResponseEndChunk {
   final num eval_duration;
 }
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class Message {
   Message(this.role, this.content);
   factory Message.fromJson(Map<String, dynamic> json) =>
@@ -217,7 +222,7 @@ class PythonCall {
       _$PythonCallFromJson(json);
   Map<String, dynamic> toJson() => _$PythonCallToJson(this);
 
-  final bool? isNeeded;
+  bool? isNeeded;
   final String modName;
   final String p0;
   final String p1;
@@ -230,7 +235,19 @@ class PythonCall {
 // Note: Feeding a model this format will make it generate PythonCall JSON objects
 @JsonSerializable()
 class ToolFormat {
-  ToolFormat(this.type, this.properties, this.required);
+  const ToolFormat(
+      {this.type = "object",
+      this.properties = const Properties(Property(type: "boolean"), Property(),
+          Property(), Property(), Property(), Property(), Property()),
+      this.required = const [
+        "isNeeded",
+        "modName",
+        "p0",
+        "p1",
+        "p2",
+        "p3",
+        "p4"
+      ]});
 
   factory ToolFormat.fromJson(Map<String, dynamic> json) =>
       _$ToolFormatFromJson(json);
@@ -243,7 +260,7 @@ class ToolFormat {
 
 @JsonSerializable()
 class Properties {
-  Properties(
+  const Properties(
       this.isNeeded, this.modName, this.p0, this.p1, this.p2, this.p3, this.p4);
 
   factory Properties.fromJson(Map<String, dynamic> json) =>
@@ -261,7 +278,7 @@ class Properties {
 
 @JsonSerializable()
 class Property {
-  Property(this.type);
+  const Property({this.type = "string"});
 
   factory Property.fromJson(Map<String, dynamic> json) =>
       _$PropertyFromJson(json);

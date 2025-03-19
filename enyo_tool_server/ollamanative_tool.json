@@ -1,0 +1,17 @@
+{
+  "model": "qwen2.5:1.5b",
+  "messages": [
+    {"role": "user", "content": "what is the weather like?"}
+  ],
+  "stream": false,
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "get_weather",
+        "description": "gets the current weather",
+        "parameters": {}
+      }
+    }
+  ]
+}

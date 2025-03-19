@@ -61,9 +61,12 @@ Map<String, dynamic> _$ModelDetailsToJson(ModelDetails instance) =>
 ModelCompletionQuery _$ModelCompletionQueryFromJson(
         Map<String, dynamic> json) =>
     ModelCompletionQuery(
-      json['model'] as String,
-      json['prompt'] as String,
-      json['stream'] as bool,
+      model: json['model'] as String,
+      prompt: json['prompt'] as String,
+      stream: json['stream'] as bool,
+      format: json['format'] == null
+          ? null
+          : ToolFormat.fromJson(json['format'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$ModelCompletionQueryToJson(
@@ -72,6 +75,7 @@ Map<String, dynamic> _$ModelCompletionQueryToJson(
       'model': instance.model,
       'prompt': instance.prompt,
       'stream': instance.stream,
+      'format': instance.format,
     };
 
 ModelCompletionResponse _$ModelCompletionResponseFromJson(
@@ -246,9 +250,15 @@ Map<String, dynamic> _$PythonCallToJson(PythonCall instance) {
 }
 
 ToolFormat _$ToolFormatFromJson(Map<String, dynamic> json) => ToolFormat(
-      json['type'] as String,
-      Properties.fromJson(json['properties'] as Map<String, dynamic>),
-      (json['required'] as List<dynamic>).map((e) => e as String).toList(),
+      type: json['type'] as String? ?? "object",
+      properties: json['properties'] == null
+          ? const Properties(Property(), Property(), Property(), Property(),
+              Property(), Property(), Property())
+          : Properties.fromJson(json['properties'] as Map<String, dynamic>),
+      required: (json['required'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const ["modName", "p0", "p1", "p2", "p3", "p4"],
     );
 
 Map<String, dynamic> _$ToolFormatToJson(ToolFormat instance) =>
@@ -280,7 +290,7 @@ Map<String, dynamic> _$PropertiesToJson(Properties instance) =>
     };
 
 Property _$PropertyFromJson(Map<String, dynamic> json) => Property(
-      json['type'] as String,
+      type: json['type'] as String? ?? "string",
     );
 
 Map<String, dynamic> _$PropertyToJson(Property instance) => <String, dynamic>{

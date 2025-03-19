@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:enyo/schemas/serialization_classes.dart';
 import 'package:http/http.dart' as http;
@@ -21,23 +20,30 @@ class OllamaClient {
 
   // have a preprocessing model check the users query to determine if a tool call is needed
   Future<PythonCall> modelCheckForToolUsage(String query) async {
-    final modelResponse = await queryModelCompletion(query);
+    final modelResponse = await queryModelCompletion(query, true);
     final json = jsonDecode(modelResponse.response);
     final callInfo = PythonCall.fromJson(json);
     return callInfo;
   }
 
-  Future<ModelCompletionResponse> queryModelCompletion(String query) async {
-    final body_obj = ModelCompletionQuery("llama3.2", query, false);
+  Future<ModelCompletionResponse> queryModelCompletion(
+      String query, bool formatted) async {
+    var body_obj = ModelCompletionQuery(
+        model: "gemma3-preproc", prompt: query, stream: false);
+    if (formatted) {
+      body_obj.format = ToolFormat();
+    }
     final response = await _client.post(Uri.parse("$url_root/generate"),
         body: jsonEncode(body_obj));
+
+    print("/generate:\n${response.body}");
     final json = jsonDecode(response.body);
     return ModelCompletionResponse.fromJson(json);
   }
 
   Future<http.StreamedResponse> queryModel(String query) async {
     model_ctx.add(Message("user", query));
-    var body_obj = ModelQuery("llama2", model_ctx).toJson();
+    var body_obj = ModelQuery("gemma3", model_ctx).toJson();
 
     var request = http.Request("POST", Uri.parse(("$url_root/chat")));
     request.body = jsonEncode(body_obj);
@@ -103,6 +109,7 @@ class JSONRPCClient {
     for (int i = 0; pyResultCache != null; i++) {
       await Future.delayed(Duration(milliseconds: 25));
       if (i == 20) {
+        print("waiting for python call return...");
         // TODO: Do somehting about a potential timeout,
       }
     }
@@ -114,6 +121,7 @@ class JSONRPCClient {
     // empty cache
     pyResultCache = null;
     print("Socket connected");
+    callInfo.isNeeded = null;
     final pycallJson = jsonEncode(callInfo);
     _sock?.write(pycallJson);
     print("Written data to socket");

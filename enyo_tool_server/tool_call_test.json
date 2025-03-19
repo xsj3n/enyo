@@ -1,0 +1,40 @@
+{
+  "model": "preproc",
+  "messages": [
+    {
+      "role": "user",
+      "content": "what color is the sky?"
+    }
+  ],
+  "stream": false,
+  "format": {
+    "type": "object",
+    "properties": {
+      "isNeeded": {
+        "type": "boolean"
+      },
+      "functionName": {
+        "type": "string"
+      },
+      "parameter0": {
+        "type": "string"
+      },
+      "parameter1": {
+        "type": "string"
+      },
+      "parameter2": {
+        "type": "string"
+      },
+      "parameter3": {
+        "type": "string"
+      },
+      "parameter4": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "isNeeded",
+      "functionName"
+    ]
+  }
+}

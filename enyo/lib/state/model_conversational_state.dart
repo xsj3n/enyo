@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:enyo/network/api_client.dart';
 import 'package:enyo/schemas/serialization_classes.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -71,6 +72,15 @@ class EnyoState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void _finalizeMsg() {
+    // swap the empty message with a message containing lastMsg
+    msgs.removeLast();
+    msgs.add(Message("assistant", lastMsg));
+    lastMsg = "";
+    nowStreaming = false;
+    notifyListeners();
+  }
+
   // Take in /generate completions and then act as if we are streaming them
   // Only consumed in the chat() function of this class
   Future<void> _displayDataAsStream(String completionData) async {
@@ -84,6 +94,7 @@ class EnyoState extends ChangeNotifier {
       await Future.delayed(
           Duration(milliseconds: 25)); // simulate streamed response
     }
+    _finalizeMsg();
   }
 
   void chat(String query) async {
@@ -96,45 +107,46 @@ class EnyoState extends ChangeNotifier {
     // phase 2 final output
     // is the call is needed, have model interpret the output data,
     // otherwise, stream the response of the primary model
-
     // TODO: decide if data interpretation will fall on the preproc or primary model
     if (callInfo.isNeeded != null && callInfo.isNeeded == true) {
       final PythonResults? res = await _rpcClient.rpcCall(callInfo);
 
-      if (res == null && _rpcClient.sockException != null) {
+      if (res == null || _rpcClient.sockException != null) {
         final modelResponse = await ollama_client.queryModelCompletion(
-            "Inform the user the of socket error that occured when communicating with the tool server:\n${_rpcClient.sockException?.message}");
+            "Inform the user the of socket error that occured when communicating with the tool server:\n${_rpcClient.sockException?.message}",
+            false);
         _displayDataAsStream(modelResponse.response);
         return;
       }
 
       final modelResponse = await ollama_client.queryModelCompletion(
-          "Summarize the following information for the user:\n${res?.pyOutput}");
+          "Summarize the following information for the user:\n${res?.pyOutput}",
+          false);
       _displayDataAsStream(modelResponse.response);
+      return;
     }
 
+    isLoading = false;
     nowStreaming = true;
     final streamed_response = await ollama_client.queryModel(query);
-    streamed_response.stream.toStringStream().listen((chunk) {
-      final model_response_chunk =
-          ModelResponseChunk.fromJson(jsonDecode(chunk));
-      if (last_model_used.isEmpty ||
-          last_model_used != model_response_chunk.model) {
-        last_model_used = model_response_chunk.model;
-      }
+    streamed_response.stream.toStringStream().listen(
+        (chunk) {
+          print("chunk:\n$chunk");
+          final model_response_chunk =
+              ModelResponseChunk.fromJson(jsonDecode(chunk));
+          if (last_model_used.isEmpty ||
+              last_model_used != model_response_chunk.model) {
+            last_model_used = model_response_chunk.model;
+          }
 
-      lastMsg += model_response_chunk.message.content;
-      notifyListeners();
-    }, onDone: () {
-      // swap the empty message with a message containing lastMsg
-      msgs.removeLast();
-      msgs.add(Message("assistant", lastMsg));
-      lastMsg = "";
-      nowStreaming = false;
-      notifyListeners();
-    }, onError: (e) {
-      msgs.add(Message("assistant",
-          "An error has occured while attempting to communicate with the Ollama server:\n${e.message}"));
-    });
+          lastMsg += model_response_chunk.message.content;
+          notifyListeners();
+        },
+        onDone: () => _finalizeMsg(),
+        onError: (e) {
+          msgs.add(Message("assistant",
+              "An error has occured while attempting to communicate with the Ollama server:\n${e.message}"));
+          notifyListeners();
+        });
   }
 }

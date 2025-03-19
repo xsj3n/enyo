@@ -1,0 +1,50 @@
+enyo/.metadata
+enyo_tool_server/venv
+enyo_tool_server/dist-newstyle
+
+
+
+# Miscellaneous
+enyo/*.class
+enyo/*.log
+enyo/*.pyc
+enyo/*.swp
+enyo/.DS_Store
+enyo/.atom/
+enyo/.buildlog/
+enyo/.history
+enyo/.svn/
+enyo/migrate_working_dir/
+
+# IntelliJ related
+enyo/*.iml
+enyo/*.ipr
+enyo/*.iws
+enyo/.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+enyo/**/doc/api/
+enyo/**/ios/Flutter/.last_build_id
+enyo/.dart_tool/
+enyo/.flutter-plugins
+enyo/.flutter-plugins-dependencies
+enyo/.pub-cache/
+enyo/.pub/
+enyo/build/
+
+# Symbolication related
+enyo/app.*.symbols
+
+# Obfuscation related
+enyo/app.*.map.json
+
+# Android Studio will place build artifacts here
+enyo/android/app/debug
+enyo/android/app/profile
+enyo/android/app/release
+
